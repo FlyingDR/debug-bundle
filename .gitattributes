@@ -1,0 +1,8 @@
+# Autodetect text files
+* text=auto
+
+# Definitively text files
+*.php text
+*.yml text
+*.md text
+composer.lock text
