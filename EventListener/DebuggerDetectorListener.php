@@ -4,6 +4,7 @@ namespace Flying\Bundle\DebugCsrfBundle\EventListener;
 
 use Flying\Bundle\DebugCsrfBundle\Csrf\DebugCsrfTokenManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -17,7 +18,7 @@ class DebuggerDetectorListener implements EventSubscriberInterface
     /**
      * @var boolean
      */
-    protected $enabled;
+    protected $underDebugger;
 
     /**
      * @param DebugCsrfTokenManager $debugTokenManager
@@ -35,21 +36,39 @@ class DebuggerDetectorListener implements EventSubscriberInterface
         if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
-        if ($this->enabled === null) {
-            $this->enabled = false;
-            $request = $event->getRequest();
-            if ((extension_loaded('Xdebug')) &&
-                ($request->query->has('XDEBUG_SESSION_START'))
-            ) {
-                $this->enabled = true;
-            } elseif ((extension_loaded('Zend Debugger')) &&
-                ($request->query->has('start_debug')) &&
-                ($request->query->has('original_url'))
-            ) {
-                $this->enabled = true;
-            }
+        $this->detectDebugger($event->getRequest());
+        $this->debugTokenManager->setEnabled($this->isUnderDebugger());
+    }
+
+    /**
+     * Detect if given request is running under debugger
+     *
+     * @param Request $request
+     * @return void
+     */
+    protected function detectDebugger(Request $request)
+    {
+        $this->underDebugger = false;
+        if ((extension_loaded('Xdebug')) &&
+            ($request->query->has('XDEBUG_SESSION_START'))
+        ) {
+            $this->underDebugger = true;
+        } elseif ((extension_loaded('Zend Debugger')) &&
+            ($request->query->has('start_debug')) &&
+            ($request->query->has('original_url'))
+        ) {
+            $this->underDebugger = true;
         }
-        $this->debugTokenManager->setEnabled($this->enabled);
+    }
+
+    /**
+     * Check if current request is running under debugger
+     *
+     * @return boolean
+     */
+    public function isUnderDebugger()
+    {
+        return (boolean)$this->underDebugger;
     }
 
     /**
