@@ -1,8 +1,8 @@
 <?php
 
-namespace Flying\Bundle\DebugBundle\EventListener;
+namespace Flying\Bundle\DebugBundle\DebuggerDetector\EventListener;
 
-use Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager;
+use Flying\Bundle\DebugBundle\DebuggerDetector\Subscriber\DebuggerStatusSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -12,28 +12,22 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DebuggerDetectorListener implements EventSubscriberInterface
 {
     /**
-     * @var boolean
+     * @var DebuggerStatusSubscriberInterface[]
      */
-    protected $enabled = false;
-    /**
-     * @var DebugCsrfTokenManager
-     */
-    protected $debugTokenManager;
-    /**
-     * @var boolean
-     */
-    protected $underDebugger;
+    protected $subscribers;
 
-    /**
-     * @param boolean $enabled
-     * @param DebugCsrfTokenManager $debugTokenManager
-     */
-    public function __construct($enabled, DebugCsrfTokenManager $debugTokenManager)
+    public function __construct()
     {
-        $this->enabled = $enabled;
-        $this->debugTokenManager = $debugTokenManager;
+        $this->subscribers = array();
     }
 
+    /**
+     * @param DebuggerStatusSubscriberInterface $subscriber
+     */
+    public function addSubscriber(DebuggerStatusSubscriberInterface $subscriber)
+    {
+        $this->subscribers[] = $subscriber;
+    }
     /**
      * @param GetResponseEvent $event
      */
@@ -42,42 +36,32 @@ class DebuggerDetectorListener implements EventSubscriberInterface
         if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
-        $this->detectDebugger($event->getRequest());
-        $this->debugTokenManager->setEnabled($this->isUnderDebugger());
+        $status = $this->detectDebugger($event->getRequest());
+        foreach ($this->subscribers as $subscriber) {
+            $subscriber->setDebuggerStatus($status);
+        }
     }
 
     /**
      * Detect if given request is running under debugger
      *
      * @param Request $request
-     * @return void
+     * @return boolean
      */
     protected function detectDebugger(Request $request)
     {
-        $this->underDebugger = false;
-        if (!$this->enabled) {
-            return;
-        }
+        $status = false;
         if ((extension_loaded('Xdebug')) &&
             ($request->query->has('XDEBUG_SESSION_START'))
         ) {
-            $this->underDebugger = true;
+            $status = true;
         } elseif ((extension_loaded('Zend Debugger')) &&
             ($request->query->has('start_debug')) &&
             ($request->query->has('original_url'))
         ) {
-            $this->underDebugger = true;
+            $status = true;
         }
-    }
-
-    /**
-     * Check if current request is running under debugger
-     *
-     * @return boolean
-     */
-    public function isUnderDebugger()
-    {
-        return (boolean)$this->underDebugger;
+        return $status;
     }
 
     /**

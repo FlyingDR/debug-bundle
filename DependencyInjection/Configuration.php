@@ -23,16 +23,22 @@ class Configuration implements ConfigurationInterface
         // @formatter:off
         $root
             ->children()
-                ->booleanNode('enabled')
-                    ->defaultTrue()
+                ->arrayNode('csrf')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')
+                            ->defaultTrue()
+                        ->end()
+                        ->scalarNode('real_token_manager')
+                            ->defaultValue('security.csrf.token_manager')
+                        ->end()
+                        ->booleanNode('token_validation_status')
+                            ->defaultTrue()
+                        ->end()
+                    ->end()
                 ->end()
-                ->scalarNode('real_token_manager')
-                    ->defaultValue('security.csrf.token_manager')
-                ->end()
-                ->booleanNode('token_validation_status')
-                    ->defaultTrue()
-                ->end()
-            ->end();
+            ->end()
+        ;
         // @formatter:on
 
         return $tb;

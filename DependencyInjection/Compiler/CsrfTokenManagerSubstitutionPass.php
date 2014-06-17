@@ -14,14 +14,8 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $config = $container->getParameter('debug.config');
+        $config = $container->getParameter('debug.csrf.config');
         $enabled = (($config['enabled']) && ($container->getParameter('kernel.debug')));
-        if ($container->hasDefinition('debug.debugger_detector')) {
-            $container->getDefinition('debug.debugger_detector')->replaceArgument(0, $enabled);
-        }
-        if ($enabled) {
-            return;
-        }
         $csrfExtension = 'form.type_extension.csrf';
         if (!$container->hasDefinition($csrfExtension)) {
             return;
@@ -30,9 +24,11 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
         if (!$container->hasDefinition($realManager)) {
             throw new InvalidArgumentException('Unavailable CSRF token manager service: ' . $realManager);
         }
-        $csrfExtension = $container->getDefinition($csrfExtension);
-        $debugManager = $container->getDefinition('debug.debug_token_manager');
-        $debugManager->setArguments(array(new Reference($realManager), $config['token_validation_status']));
-        $csrfExtension->replaceArgument(0, $debugManager);
+        $debugManagerId = 'debug.csrf.debug_token_manager';
+        $debugManager = $container->getDefinition($debugManagerId);
+        $debugManager->replaceArgument(0, new Reference($realManager));
+        $debugManager->addMethodCall('setEnabled', array($enabled));
+        $debugManager->addMethodCall('setTokenValidationStatus', array($config['token_validation_status']));
+        $container->getDefinition($csrfExtension)->replaceArgument(0, new Reference($debugManagerId));
     }
 }

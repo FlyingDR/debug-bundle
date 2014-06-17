@@ -2,10 +2,11 @@
 
 namespace Flying\Bundle\DebugBundle\Csrf;
 
+use Flying\Bundle\DebugBundle\DebuggerDetector\Subscriber\DebuggerStatusSubscriberInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class DebugCsrfTokenManager implements CsrfTokenManagerInterface
+class DebugCsrfTokenManager implements CsrfTokenManagerInterface, DebuggerStatusSubscriberInterface
 {
     /**
      * @var boolean
@@ -14,7 +15,7 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface
     /**
      * @var mixed
      */
-    private $status = true;
+    private $tokenValidationStatus = true;
     /**
      * @var CsrfTokenManagerInterface
      */
@@ -22,12 +23,10 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface
 
     /**
      * @param CsrfTokenManagerInterface $tokenManager
-     * @param mixed $tokenValidationStatus
      */
-    public function __construct(CsrfTokenManagerInterface $tokenManager, $tokenValidationStatus = true)
+    public function __construct(CsrfTokenManagerInterface $tokenManager)
     {
         $this->realTokenManager = $tokenManager;
-        $this->setStatus($tokenValidationStatus);
     }
 
     /**
@@ -49,17 +48,17 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface
     /**
      * @param mixed $status
      */
-    public function setStatus($status)
+    public function setTokenValidationStatus($status)
     {
-        $this->status = $status;
+        $this->tokenValidationStatus = $status;
     }
 
     /**
      * @return mixed
      */
-    public function getStatus()
+    public function getTokenValidationStatus()
     {
-        return $this->status;
+        return $this->tokenValidationStatus;
     }
 
     /**
@@ -92,8 +91,19 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface
     public function isTokenValid(CsrfToken $token)
     {
         if ($this->getEnabled()) {
-            return $this->getStatus();
+            return $this->getTokenValidationStatus();
         }
         return $this->realTokenManager->isTokenValid($token);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDebuggerStatus($status)
+    {
+        // Disable CSRF validation substitution if request is not running under debugger
+        if (!$status) {
+            $this->setEnabled(false);
+        }
     }
 }
