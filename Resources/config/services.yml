@@ -1,13 +1,15 @@
 parameters:
-    debug_csrf.debug_token_manager.class: Flying\Bundle\DebugCsrfBundle\Csrf\DebugCsrfTokenManager
-    debug_csrf.debugger_detector.class: Flying\Bundle\DebugCsrfBundle\EventListener\DebuggerDetectorListener
+    debug.debugger_detector.class: Flying\Bundle\DebugBundle\EventListener\DebuggerDetectorListener
+
+    debug.csrf.debug_token_manager.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager
 
 services:
-    debug_csrf.debug_token_manager:
-        class: %debug_csrf.debug_token_manager.class%
-        arguments: [@security.csrf.token_manager]
-    debug_csrf.debugger_detector:
-        class: %debug_csrf.debugger_detector.class%
-        arguments: [%kernel.debug%, @debug_csrf.debug_token_manager]
+    debug.debugger_detector:
+        class: %debug.debugger_detector.class%
+        arguments: [%kernel.debug%, @debug.debug_token_manager]
         tags:
             - { name: kernel.event_subscriber }
+
+    debug.csrf.debug_token_manager:
+        class: %debug.csrf.debug_token_manager.class%
+        arguments: [@security.csrf.token_manager]

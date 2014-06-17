@@ -1,6 +1,6 @@
 <?php
 
-namespace Flying\Bundle\DebugCsrfBundle\DependencyInjection\Compiler;
+namespace Flying\Bundle\DebugBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -14,10 +14,10 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $config = $container->getParameter('debug_csrf.config');
+        $config = $container->getParameter('debug.config');
         $enabled = (($config['enabled']) && ($container->getParameter('kernel.debug')));
-        if ($container->hasDefinition('debug_csrf.debugger_detector')) {
-            $container->getDefinition('debug_csrf.debugger_detector')->replaceArgument(0, $enabled);
+        if ($container->hasDefinition('debug.debugger_detector')) {
+            $container->getDefinition('debug.debugger_detector')->replaceArgument(0, $enabled);
         }
         if ($enabled) {
             return;
@@ -31,7 +31,7 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
             throw new InvalidArgumentException('Unavailable CSRF token manager service: ' . $realManager);
         }
         $csrfExtension = $container->getDefinition($csrfExtension);
-        $debugManager = $container->getDefinition('debug_csrf.debug_token_manager');
+        $debugManager = $container->getDefinition('debug.debug_token_manager');
         $debugManager->setArguments(array(new Reference($realManager), $config['token_validation_status']));
         $csrfExtension->replaceArgument(0, $debugManager);
     }

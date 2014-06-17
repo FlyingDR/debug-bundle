@@ -1,12 +1,12 @@
 <?php
 
-namespace Flying\Bundle\DebugCsrfBundle;
+namespace Flying\Bundle\DebugBundle;
 
-use Flying\Bundle\DebugCsrfBundle\DependencyInjection\Compiler\CsrfTokenManagerSubstitutionPass;
+use Flying\Bundle\DebugBundle\DependencyInjection\Compiler\CsrfTokenManagerSubstitutionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class DebugCsrfBundle extends Bundle
+class DebugBundle extends Bundle
 {
     /**
      * {@inheritdoc}

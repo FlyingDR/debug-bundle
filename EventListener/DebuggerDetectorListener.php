@@ -1,8 +1,8 @@
 <?php
 
-namespace Flying\Bundle\DebugCsrfBundle\EventListener;
+namespace Flying\Bundle\DebugBundle\EventListener;
 
-use Flying\Bundle\DebugCsrfBundle\Csrf\DebugCsrfTokenManager;
+use Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;

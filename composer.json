@@ -1,7 +1,7 @@
 {
-    "name": "flying/debug-csrf-bundle",
+    "name": "flying/debug-bundle",
     "type": "symfony-bundle",
-    "description": "Small Symfony 2 bundle to disable CSRF token validation when running application under debugger",
+    "description": "Symfony 2 bundle to provide several tools to make it easier to use debugger with Symfony 2 applications",
     "license": "MIT",
     "authors": [
         {
@@ -11,10 +11,10 @@
     ],
     "autoload": {
         "psr-0": {
-            "Flying\\Bundle\\DebugCsrfBundle": ""
+            "Flying\\Bundle\\DebugBundle": ""
         }
     },
-    "target-dir": "Flying/Bundle/DebugCsrfBundle",
+    "target-dir": "Flying/Bundle/DebugBundle",
     "require-dev": {
         "symfony/dependency-injection": "~2.2",
         "symfony/http-kernel": "~2.2",

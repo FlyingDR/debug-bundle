@@ -1,6 +1,6 @@
 <?php
 
-namespace Flying\Bundle\DebugCsrfBundle\Csrf;
+namespace Flying\Bundle\DebugBundle\Csrf;
 
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
