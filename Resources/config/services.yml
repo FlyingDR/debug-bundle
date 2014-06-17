@@ -8,6 +8,6 @@ services:
         arguments: [@security.csrf.token_manager]
     debug_csrf.debugger_detector:
         class: %debug_csrf.debugger_detector.class%
-        arguments: [@debug_csrf.debug_token_manager]
+        arguments: [%kernel.debug%, @debug_csrf.debug_token_manager]
         tags:
             - { name: kernel.event_subscriber }

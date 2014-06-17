@@ -12,6 +12,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DebuggerDetectorListener implements EventSubscriberInterface
 {
     /**
+     * @var boolean
+     */
+    protected $enabled = false;
+    /**
      * @var DebugCsrfTokenManager
      */
     protected $debugTokenManager;
@@ -21,10 +25,12 @@ class DebuggerDetectorListener implements EventSubscriberInterface
     protected $underDebugger;
 
     /**
+     * @param boolean $enabled
      * @param DebugCsrfTokenManager $debugTokenManager
      */
-    public function __construct(DebugCsrfTokenManager $debugTokenManager)
+    public function __construct($enabled, DebugCsrfTokenManager $debugTokenManager)
     {
+        $this->enabled = $enabled;
         $this->debugTokenManager = $debugTokenManager;
     }
 
@@ -49,6 +55,9 @@ class DebuggerDetectorListener implements EventSubscriberInterface
     protected function detectDebugger(Request $request)
     {
         $this->underDebugger = false;
+        if (!$this->enabled) {
+            return;
+        }
         if ((extension_loaded('Xdebug')) &&
             ($request->query->has('XDEBUG_SESSION_START'))
         ) {

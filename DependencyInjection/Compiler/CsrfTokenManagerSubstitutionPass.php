@@ -15,7 +15,11 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $config = $container->getParameter('debug_csrf.config');
-        if ((!$config['enabled']) || (!$container->getParameter('kernel.debug'))) {
+        $enabled = (($config['enabled']) && ($container->getParameter('kernel.debug')));
+        if ($container->hasDefinition('debug_csrf.debugger_detector')) {
+            $container->getDefinition('debug_csrf.debugger_detector')->replaceArgument(0, $enabled);
+        }
+        if ($enabled) {
             return;
         }
         $csrfExtension = 'form.type_extension.csrf';
