@@ -1,7 +1,8 @@
 parameters:
     debug.debugger_detector.class: Flying\Bundle\DebugBundle\DebuggerDetector\EventListener\DebuggerDetectorListener
 
-    debug.csrf.debug_token_manager.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager
+    debug.csrf.csrf_provider.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfProvider
+    debug.csrf.token_manager.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager
 
 services:
     debug.debugger_detector:
@@ -9,10 +10,14 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    debug.csrf.debug_token_manager:
-        class: %debug.csrf.debug_token_manager.class%
-        arguments: [@security.csrf.token_manager]
+    debug.csrf.csrf_provider:
+        class: %debug.csrf.csrf_provider.class%
+        arguments: [@form.csrf_provider]
         tags:
             - { name: debug.debugger_status.subscriber }
 
-
+    debug.csrf.token_manager:
+        class: %debug.csrf.token_manager.class%
+        arguments: [@security.csrf.token_manager]
+        tags:
+            - { name: debug.debugger_status.subscriber }

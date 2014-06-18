@@ -19,9 +19,6 @@ debug:
     csrf:
         # true to enable CSRF token validation emulation, false to disable it completely
         enabled: true
-        # Service name of real CSRF token manager used in application,
-        # it will keep handling all real validation requests
-        real_token_manager: security.csrf.token_manager
         # Status of emulated CSRF token validation
         token_validation_status: true
 ```
