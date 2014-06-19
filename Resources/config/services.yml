@@ -4,6 +4,9 @@ parameters:
     debug.csrf.csrf_provider.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfProvider
     debug.csrf.token_manager.class: Flying\Bundle\DebugBundle\Csrf\DebugCsrfTokenManager
 
+    debug.security.auth_provider.class: Flying\Bundle\DebugBundle\Security\Authentication\DebugAuthenticationProvider
+    debug.security.auth_listener.class: Flying\Bundle\DebugBundle\Security\Firewall\DebugAuthenticationListener
+
 services:
     debug.debugger_detector:
         class: %debug.debugger_detector.class%
@@ -19,5 +22,14 @@ services:
     debug.csrf.token_manager:
         class: %debug.csrf.token_manager.class%
         arguments: [@security.csrf.token_manager]
+        tags:
+            - { name: debug.debugger_status.subscriber }
+
+    debug.security.auth_provider:
+        class: %debug.security.auth_provider.class%
+
+    debug.security.auth_listener:
+        class: %debug.security.auth_listener.class%
+        arguments: [@security.context, @debug.security.auth_provider]
         tags:
             - { name: debug.debugger_status.subscriber }
