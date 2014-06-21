@@ -13,6 +13,9 @@ class SecurityServicesConfigurationPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasParameter('debug.security.config')) {
+            return;
+        }
         $config = $container->getParameter('debug.security.config');
         $builder = $container->getDefinition($config['token_builder']);
         $builder->addMethodCall('setTokenConfig', array($config['token_config']));
