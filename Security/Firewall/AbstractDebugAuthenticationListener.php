@@ -3,6 +3,7 @@
 namespace Flying\Bundle\DebugBundle\Security\Firewall;
 
 use Flying\Bundle\DebugBundle\DebuggerDetector\Subscriber\DebuggerStatusSubscriberInterface;
+use Flying\Bundle\DebugBundle\Security\Authentication\DebugAuthenticationProvider;
 use Flying\Bundle\DebugBundle\Security\Authentication\TokenBuilder\TokenBuilderInterface;
 use Flying\Bundle\DebugBundle\Security\Authentication\TokenBuilder\TokenBuilderReceiverInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -38,17 +39,23 @@ abstract class AbstractDebugAuthenticationListener implements ListenerInterface,
      * @var AuthenticationManagerInterface
      */
     private $authenticationManager;
+    /**
+     * @var DebugAuthenticationProvider
+     */
+    private $debugAuthProvider;
 
     /**
      * Constructor
      *
      * @param SecurityContextInterface $securityContext
      * @param AuthenticationManagerInterface $authenticationManager
+     * @param DebugAuthenticationProvider $debugAuthProvider
      */
-    function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager)
+    function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, DebugAuthenticationProvider $debugAuthProvider)
     {
         $this->securityContext = $securityContext;
         $this->authenticationManager = $authenticationManager;
+        $this->debugAuthProvider = $debugAuthProvider;
     }
 
     /**
@@ -141,6 +148,7 @@ abstract class AbstractDebugAuthenticationListener implements ListenerInterface,
             $enabled &= $this->getDebuggerStatus();
         }
         if (!$enabled) {
+            $this->debugAuthProvider->setEnabled(false);
             return;
         }
         $this->doHandle($event);

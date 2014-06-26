@@ -11,6 +11,10 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 class DebugAuthenticationProvider implements AuthenticationProviderInterface, TokenBuilderReceiverInterface
 {
     /**
+     * @var boolean
+     */
+    protected $enabled = true;
+    /**
      * @var TokenBuilderInterface
      */
     protected $builder;
@@ -24,10 +28,21 @@ class DebugAuthenticationProvider implements AuthenticationProviderInterface, To
     }
 
     /**
+     * @param boolean $status
+     */
+    public function setEnabled($status)
+    {
+        $this->enabled = (boolean)$status;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function authenticate(TokenInterface $token)
     {
+        if (!$this->enabled) {
+            return null;
+        }
         $aToken = $this->builder->buildAuthenticated($token);
         if (!$aToken instanceof TokenInterface) {
             throw new AuthenticationException('Debug authentication failed');

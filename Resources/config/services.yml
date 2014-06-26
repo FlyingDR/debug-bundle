@@ -30,6 +30,6 @@ services:
 
     debug.security.auth_listener:
         class: %debug.security.auth_listener.class%
-        arguments: [@security.context, @debug.security.auth_provider]
+        arguments: [@security.context, @security.authentication.manager, @debug.security.auth_provider]
         tags:
             - { name: debug.debugger_status.subscriber }
