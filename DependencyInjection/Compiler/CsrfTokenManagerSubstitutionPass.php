@@ -15,8 +15,8 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
     {
         $config = $container->getParameter('debug.csrf.config');
         $enabled = (($config['enabled']) && ($container->getParameter('kernel.debug')));
-        $csrfExtension = 'form.type_extension.csrf';
-        if (!$container->hasDefinition($csrfExtension)) {
+        $csrfProvider = 'form.csrf_provider';
+        if (!$container->hasDefinition($csrfProvider)) {
             return;
         }
         // CSRF token manager should be used for Symfony 2.4+,
@@ -34,6 +34,12 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
         $definition = $container->getDefinition($service);
         $definition->addMethodCall('setEnabled', array($enabled));
         $definition->addMethodCall('setTokenValidationStatus', array($config['token_validation_status']));
-        $container->getDefinition($csrfExtension)->replaceArgument(0, new Reference($service));
+        $provider = $container->getDefinition($csrfProvider);
+        $provider->setPublic(false);
+        $id = 'debug.csrf.real_form_csrf_provider';
+        $container->setDefinition($id, $provider);
+        $definition->replaceArgument(0, new Reference($id));
+        $container->removeDefinition($service);
+        $container->setDefinition($csrfProvider, $definition);
     }
 }

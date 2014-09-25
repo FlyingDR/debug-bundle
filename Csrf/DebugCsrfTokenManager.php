@@ -3,6 +3,8 @@
 namespace Flying\Bundle\DebugBundle\Csrf;
 
 use Flying\Bundle\DebugBundle\DebuggerDetector\Subscriber\DebuggerStatusSubscriberInterface;
+use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderAdapter;
+use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -22,11 +24,11 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface, DebuggerStatus
     private $realTokenManager;
 
     /**
-     * @param CsrfTokenManagerInterface $tokenManager
+     * @param CsrfProviderInterface $csrfProvider
      */
-    public function __construct(CsrfTokenManagerInterface $tokenManager)
+    public function __construct(CsrfProviderInterface $csrfProvider)
     {
-        $this->realTokenManager = $tokenManager;
+        $this->realTokenManager = new CsrfProviderAdapter($csrfProvider);
     }
 
     /**
