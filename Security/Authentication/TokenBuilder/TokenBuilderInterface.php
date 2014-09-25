@@ -19,9 +19,11 @@ interface TokenBuilderInterface
 
     /**
      * Build debug authentication token from given request
+     * Return NULL if no token can be built, e.g. if there is
+     * no debug user information is available
      *
      * @param Request $request
-     * @return TokenInterface
+     * @return TokenInterface|null
      */
     public function build(Request $request);
 

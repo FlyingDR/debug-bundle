@@ -17,7 +17,9 @@ class DebugAuthenticationListener extends AbstractDebugAuthenticationListener
             return;
         }
         $token = $this->getTokenBuilder()->build($event->getRequest());
-        $authenticatedToken = $this->getAuthenticationManager()->authenticate($token);
-        $this->getSecurityContext()->setToken($authenticatedToken);
+        if ($token instanceof TokenInterface) {
+            $authenticatedToken = $this->getAuthenticationManager()->authenticate($token);
+            $this->getSecurityContext()->setToken($authenticatedToken);
+        }
     }
 }
