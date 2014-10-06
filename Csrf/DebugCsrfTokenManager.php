@@ -8,16 +8,8 @@ use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class DebugCsrfTokenManager implements CsrfTokenManagerInterface, DebuggerStatusSubscriberInterface
+class DebugCsrfTokenManager extends DebugCsrfStubImplementation implements CsrfTokenManagerInterface, DebuggerStatusSubscriberInterface
 {
-    /**
-     * @var boolean
-     */
-    private $enabled = true;
-    /**
-     * @var mixed
-     */
-    private $tokenValidationStatus = true;
     /**
      * @var CsrfTokenManagerInterface
      */
@@ -29,38 +21,6 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface, DebuggerStatus
     public function __construct(CsrfProviderInterface $csrfProvider)
     {
         $this->realTokenManager = new CsrfProviderAdapter($csrfProvider);
-    }
-
-    /**
-     * @param boolean $enabled
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = (boolean)$enabled;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param mixed $status
-     */
-    public function setTokenValidationStatus($status)
-    {
-        $this->tokenValidationStatus = $status;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTokenValidationStatus()
-    {
-        return $this->tokenValidationStatus;
     }
 
     /**
@@ -96,16 +56,5 @@ class DebugCsrfTokenManager implements CsrfTokenManagerInterface, DebuggerStatus
             return $this->getTokenValidationStatus();
         }
         return $this->realTokenManager->isTokenValid($token);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDebuggerStatus($status)
-    {
-        // Disable CSRF validation substitution if request is not running under debugger
-        if (!$status) {
-            $this->setEnabled(false);
-        }
     }
 }

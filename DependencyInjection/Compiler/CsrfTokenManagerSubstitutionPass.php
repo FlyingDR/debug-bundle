@@ -33,6 +33,7 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
         }
         $definition = $container->getDefinition($service);
         $definition->addMethodCall('setEnabled', array($enabled));
+        $definition->addMethodCall('setPermanent', array($config['permanent']));
         $definition->addMethodCall('setTokenValidationStatus', array($config['token_validation_status']));
         $provider = $container->getDefinition($csrfProvider);
         $provider->setPublic(false);

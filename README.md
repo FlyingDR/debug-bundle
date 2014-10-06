@@ -19,6 +19,8 @@ debug:
     csrf:
         # true to enable CSRF token validation emulation, false to disable it completely
         enabled: true
+        # true to allow use of CSRF token validation emulation permanently, false to enable it only when running under debugger
+        permanent: false
         # Status of emulated CSRF token validation
         token_validation_status: true
 ```
