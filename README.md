@@ -19,12 +19,13 @@ debug:
     csrf:
         # true to enable CSRF token validation emulation, false to disable it completely
         enabled: true
-        # true to allow use of CSRF token validation emulation permanently, false to enable it only when running under debugger
+        # true to allow use of CSRF token validation emulation permanently, 
+        # false to enable it only when running under debugger
         permanent: false
         # Status of emulated CSRF token validation
         token_validation_status: true
 ```
-Validation emulation is disabled automatically for production environment and can also be disabled in development environment. When enabled - it will substitute real CSRF validation with configured value if request was running under debugger. For normal requests all CSRF validation will be passed to real CSRF token manager.
+Unless enabled permanently - validation emulation is disabled automatically for production environment and can also be disabled in development environment. When enabled - it will substitute real CSRF validation with configured value if request was running under debugger. For normal requests all CSRF validation will be passed to real CSRF token manager unless use of emulation is forced by enabling ```permanent``` configuration option.
 
 Debug authentication provider
 -----------------------------
