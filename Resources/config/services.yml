@@ -16,12 +16,14 @@ services:
     debug.csrf.csrf_provider:
         class: %debug.csrf.csrf_provider.class%
         arguments: [@form.csrf_provider]
+        abstract: true
         tags:
             - { name: debug.debugger_status.subscriber }
 
     debug.csrf.token_manager:
         class: %debug.csrf.token_manager.class%
         arguments: [@security.csrf.token_manager]
+        abstract: true
         tags:
             - { name: debug.debugger_status.subscriber }
 

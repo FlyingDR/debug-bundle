@@ -32,6 +32,7 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
             $container->removeDefinition($id);
         }
         $definition = $container->getDefinition($service);
+        $definition->setAbstract(false);
         $definition->addMethodCall('setEnabled', array($enabled));
         $definition->addMethodCall('setPermanent', array($config['permanent']));
         $definition->addMethodCall('setTokenValidationStatus', array($config['token_validation_status']));
