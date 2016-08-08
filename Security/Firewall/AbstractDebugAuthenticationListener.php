@@ -51,7 +51,7 @@ abstract class AbstractDebugAuthenticationListener implements ListenerInterface,
      * @param AuthenticationManagerInterface $authenticationManager
      * @param DebugAuthenticationProvider $debugAuthProvider
      */
-    function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, DebugAuthenticationProvider $debugAuthProvider)
+    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, DebugAuthenticationProvider $debugAuthProvider)
     {
         $this->securityContext = $securityContext;
         $this->authenticationManager = $authenticationManager;
@@ -143,7 +143,7 @@ abstract class AbstractDebugAuthenticationListener implements ListenerInterface,
      */
     public function handle(GetResponseEvent $event)
     {
-        $enabled = (($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST) && ($this->getEnabled()));
+        $enabled = (($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST) && $this->getEnabled());
         if (!$this->getPermanent()) {
             $enabled &= $this->getDebuggerStatus();
         }

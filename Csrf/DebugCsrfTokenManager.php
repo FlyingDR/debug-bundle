@@ -2,13 +2,12 @@
 
 namespace Flying\Bundle\DebugBundle\Csrf;
 
-use Flying\Bundle\DebugBundle\DebuggerDetector\Subscriber\DebuggerStatusSubscriberInterface;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderAdapter;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-class DebugCsrfTokenManager extends DebugCsrfStubImplementation implements CsrfTokenManagerInterface, DebuggerStatusSubscriberInterface
+class DebugCsrfTokenManager extends DebugCsrfStubImplementation implements CsrfTokenManagerInterface
 {
     /**
      * @var CsrfTokenManagerInterface

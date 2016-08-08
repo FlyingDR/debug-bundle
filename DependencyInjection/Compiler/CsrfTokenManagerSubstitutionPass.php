@@ -4,17 +4,23 @@ namespace Flying\Bundle\DebugBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Exception\OutOfBoundsException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
+     * @throws InvalidArgumentException
+     * @throws BadMethodCallException
+     * @throws OutOfBoundsException
      */
     public function process(ContainerBuilder $container)
     {
         $config = $container->getParameter('debug.csrf.config');
-        $enabled = (($config['enabled']) && ($container->getParameter('kernel.debug')));
+        $enabled = ($config['enabled'] && $container->getParameter('kernel.debug'));
         $csrfProvider = 'form.csrf_provider';
         if (!$container->hasDefinition($csrfProvider)) {
             return;
@@ -25,7 +31,7 @@ class CsrfTokenManagerSubstitutionPass implements CompilerPassInterface
             'provider' => 'debug.csrf.csrf_provider',
             'manager'  => 'debug.csrf.token_manager',
         );
-        $type = ($container->hasDefinition('security.csrf.token_manager')) ? 'manager' : 'provider';
+        $type = $container->hasDefinition('security.csrf.token_manager') ? 'manager' : 'provider';
         $service = $services[$type];
         unset($services[$type]);
         foreach ($services as $id) {

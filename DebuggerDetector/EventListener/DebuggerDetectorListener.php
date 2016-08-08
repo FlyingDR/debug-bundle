@@ -28,6 +28,7 @@ class DebuggerDetectorListener implements EventSubscriberInterface
     {
         $this->subscribers[] = $subscriber;
     }
+
     /**
      * @param GetResponseEvent $event
      */
@@ -51,14 +52,9 @@ class DebuggerDetectorListener implements EventSubscriberInterface
     protected function detectDebugger(Request $request)
     {
         $status = false;
-        if ((extension_loaded('Xdebug')) &&
-            ($request->query->has('XDEBUG_SESSION_START'))
-        ) {
+        if (extension_loaded('Xdebug') && $request->query->has('XDEBUG_SESSION_START')) {
             $status = true;
-        } elseif ((extension_loaded('Zend Debugger')) &&
-            ($request->query->has('start_debug')) &&
-            ($request->query->has('original_url'))
-        ) {
+        } elseif (extension_loaded('Zend Debugger') && $request->query->has('start_debug') && $request->query->has('original_url')) {
             $status = true;
         }
         return $status;

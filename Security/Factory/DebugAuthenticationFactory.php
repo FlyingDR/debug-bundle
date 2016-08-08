@@ -19,7 +19,7 @@ class DebugAuthenticationFactory implements SecurityFactoryInterface
             if (!$r->implementsInterface('Flying\Bundle\DebugBundle\Security\Authentication\TokenBuilder\TokenBuilderInterface')) {
                 throw new LogicException('Token builder should implement TokenBuilderInterface interface: ' . $builder);
             }
-            $builderId = join('.', array($this->getKey(), 'token_builder', uniqid('tb', true)));
+            $builderId = implode('.', array($this->getKey(), 'token_builder', uniqid('tb', true)));
             $builder = new Definition($builder);
             $builder->setPublic(false);
             $container->setDefinition($builderId, $builder);

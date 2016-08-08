@@ -8,12 +8,14 @@ use Flying\Bundle\DebugBundle\DependencyInjection\Compiler\SecurityServicesConfi
 use Flying\Bundle\DebugBundle\Security\Factory\DebugAuthenticationFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class DebugBundle extends Bundle
 {
     /**
      * {@inheritdoc}
+     * @throws LogicException
      */
     public function build(ContainerBuilder $container)
     {
